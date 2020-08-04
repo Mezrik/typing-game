@@ -20,11 +20,7 @@ module.exports = {
     },
     historyApiFallback: true,
   },
-  entry: [
-    "@babel/polyfill",
-    "whatwg-fetch",
-    path.join(__dirname, "/src/index.ts"),
-  ],
+  entry: ["@babel/polyfill", path.join(__dirname, "/src/index.ts")],
   module: {
     rules: [
       {
