@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
+    "@types/matter-js": "^0.14.5",
     "dotenv": "^8.2.0",
     "matter-js": "^0.14.2"
   }
