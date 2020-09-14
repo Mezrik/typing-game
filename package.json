@@ -1,9 +1,10 @@
 {
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "Type Game client app",
   "scripts": {
-    "build": "webpack --config webpack.dev.ts",
-    "start": "webpack-dev-server --watch --config webpack.dev.ts"
+    "build-dev": "webpack --config webpack.config.js --env development",
+    "build": "webpack --config webpack.config.js --env production",
+    "start": "webpack-dev-server --watch --config webpack.config.js --env development"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
@@ -20,12 +21,12 @@
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.1.4",
     "workbox-webpack-plugin": "^5.1.3"
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
     "@types/matter-js": "^0.14.5",
-    "dotenv": "^8.2.0",
     "matter-js": "^0.14.2"
   }
 }

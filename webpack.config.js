@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
+const { merge } = require("webpack-merge");
 
 const dev = process.env.NODE_ENV !== "production";
 
@@ -10,16 +11,7 @@ const HTMLWebpackPluginConfig = new HTMLWebpackPlugin({
   inject: "body",
 });
 
-module.exports = {
-  devServer: {
-    host: "localhost",
-    port: "3000",
-    hot: true,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
-    historyApiFallback: true,
-  },
+const commonConfig = {
   entry: ["@babel/polyfill", path.join(__dirname, "/src/index.ts")],
   module: {
     rules: [
@@ -52,6 +44,34 @@ module.exports = {
     filename: "index.js",
     path: path.join(__dirname, "/dist"),
   },
+  plugins: [HTMLWebpackPluginConfig],
+};
+
+const productionConfig = {
+  mode: "production",
+  plugins: [new webpack.HotModuleReplacementPlugin()],
+};
+
+const developmentConfig = {
   mode: "development",
-  plugins: [HTMLWebpackPluginConfig, new webpack.HotModuleReplacementPlugin()],
+  devServer: {
+    host: "localhost",
+    port: "3000",
+    hot: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
+    historyApiFallback: true,
+  },
+};
+
+module.exports = (env) => {
+  switch (env) {
+    case "development":
+      return merge(commonConfig, developmentConfig);
+    case "production":
+      return merge(commonConfig, productionConfig);
+    default:
+      throw new Error("No matching configuration was found!");
+  }
 };
