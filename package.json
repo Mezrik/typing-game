@@ -2,10 +2,11 @@
   "version": "1.0.0",
   "description": "My webpack project",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config webpack.dev.ts",
     "start": "webpack-dev-server --watch --config webpack.dev.ts"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
     "@types/webpack-env": "^1.15.2",
     "babel-loader": "^8.1.0",
