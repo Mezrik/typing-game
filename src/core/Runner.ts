@@ -6,7 +6,7 @@ type CancelAnimationFrame = (RequestID: number) => void;
 class Runner {
   private _requestAnimationFrame: RequestAnimationFrame;
   private _cancelAnimationFrame: CancelAnimationFrame;
-  private frameRequestId: DOMHighResTimeStamp;
+  private _frameRequestId: DOMHighResTimeStamp;
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -38,7 +38,7 @@ class Runner {
 
   public run(engine: EngineInterface) {
     const render = (time: DOMHighResTimeStamp = 0) => {
-      this.frameRequestId = this._requestAnimationFrame(render);
+      this._frameRequestId = this._requestAnimationFrame(render);
       this.tick(time, engine);
     };
 
@@ -46,7 +46,7 @@ class Runner {
   }
 
   public stop() {
-    this._cancelAnimationFrame(this.frameRequestId);
+    this._cancelAnimationFrame(this._frameRequestId);
   }
 
   public tick(time: DOMHighResTimeStamp, engine: EngineInterface) {

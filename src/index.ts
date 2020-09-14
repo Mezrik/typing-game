@@ -1,7 +1,7 @@
 import Runner from "./core/Runner";
 import Engine from "./core/Engine";
 
-const engine = new Engine();
+const engine = new Engine({ element: document.getElementById("app") });
 
 const runnerInstance = new Runner();
 runnerInstance.run(engine);
