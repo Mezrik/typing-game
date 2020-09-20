@@ -1,12 +1,16 @@
 import { EngineInterface } from "./Engine";
+import Letter from "../objects/Letter";
 
 type RequestAnimationFrame = (callback: FrameRequestCallback) => number;
 type CancelAnimationFrame = (RequestID: number) => void;
+type TickCallback = () => void;
 
 class Runner {
   private _requestAnimationFrame: RequestAnimationFrame;
   private _cancelAnimationFrame: CancelAnimationFrame;
   private _frameRequestId: DOMHighResTimeStamp;
+
+  private _callbacks: TickCallback[] = [];
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -50,7 +54,12 @@ class Runner {
   }
 
   public tick(time: DOMHighResTimeStamp, engine: EngineInterface) {
-    console.log(time, engine);
+    const newLetter = new Letter("P", 16);
+    engine.add(newLetter);
+  }
+
+  public onTick(callback: TickCallback) {
+    this._callbacks.push(callback);
   }
 }
 

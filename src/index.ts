@@ -1,37 +1,25 @@
 import Runner from "./core/Runner";
 import Engine from "./core/Engine";
+import Letter from "./objects/Letter";
+
+const LETTERS_ON_SCREEN = 12;
 
 const engine = new Engine({ element: document.getElementById("app") });
 
 const runnerInstance = new Runner();
 runnerInstance.run(engine);
 
-// import { Engine, Render, World, Bodies } from "matter-js";
+const lettersMap: { [letter: string]: number[] } = {};
 
-// // create an engine
-// const engine = Engine.create();
+const keepLettersComming = () => {
+  if (engine.bodiesCount < LETTERS_ON_SCREEN) {
+    const letter = "T";
+    const pos = engine.add(new Letter(letter));
 
-// // create a renderer
-// const render = Render.create({
-//   element: document.getElementById("app"),
-//   engine,
-//   options: {
-//     width: window.innerWidth,
-//     height: window.innerHeight,
-//     wireframes: false,
-//   },
-// });
+    lettersMap[letter]
+      ? lettersMap[letter].push(pos)
+      : (lettersMap[letter] = [pos]);
+  }
+};
 
-// // create two boxes and a ground
-// const boxA = Bodies.rectangle(400, 200, 80, 80);
-// const boxB = Bodies.rectangle(450, 50, 80, 80);
-// const ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
-
-// // add all of the bodies to the world
-// World.add(engine.world, [boxA, boxB, ground]);
-
-// // run the engine
-// Engine.run(engine);
-
-// // run the renderer
-// Render.run(render);
+const main = () => {};
