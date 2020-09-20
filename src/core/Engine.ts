@@ -34,6 +34,7 @@ class Engine implements EngineInterface {
     }
 
     const canvas = document.createElement("canvas");
+    canvas.classList.add("game-canvas");
     canvas.width = options.width || 400;
     canvas.height = options.height || 300;
 

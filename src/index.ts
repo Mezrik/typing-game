@@ -1,3 +1,5 @@
+import "./assets/main.scss";
+
 import Runner from "./core/Runner";
 import Engine from "./core/Engine";
 import Letter from "./objects/Letter";
@@ -5,12 +7,13 @@ import { getRandomCapitalLetter, getRandomInt } from "./utils/helpers";
 
 const LETTERS_ON_SCREEN = 12;
 const X_MIN = 30;
-const X_MAX = 830;
+const X_MAX = 630;
+const Y_HEIGHT = 768;
 const Y_STARTING_POINT = 40;
 
 const engine = new Engine({
-  element: document.getElementById("app"),
-  options: { width: window.innerWidth, height: window.innerHeight },
+  element: document.getElementById("game"),
+  options: { width: X_MIN + X_MAX, height: Y_HEIGHT },
 });
 
 const runnerInstance = new Runner();
