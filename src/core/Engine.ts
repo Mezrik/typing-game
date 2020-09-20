@@ -1,8 +1,9 @@
 import Body from "./Body";
+import { v4 as uuidv4 } from "uuid";
 
 export interface EngineInterface {
   add: (body: Body) => number;
-  remove: (position: number) => void;
+  remove: (id: string) => void;
 }
 
 export type Coords = {
@@ -22,7 +23,7 @@ class Engine implements EngineInterface {
   private _rootEl: HTMLElement;
   private _ctx: CanvasRenderingContext2D;
   private _canvas: HTMLCanvasElement;
-  private _bodies: Body[] = [];
+  private _bodies: { [key: string]: Body } = {};
 
   constructor(opts: EngineOptions) {
     const { options = {}, element } = opts;
@@ -47,23 +48,53 @@ class Engine implements EngineInterface {
     return this._ctx;
   }
 
+  get width() {
+    return this._canvas.width;
+  }
+
+  get height() {
+    return this._canvas.height;
+  }
+
+  get bodies() {
+    return Object.values(this._bodies);
+  }
+
   get bodiesCount() {
-    return this._bodies.length;
+    return Object.keys(this._bodies).length;
+  }
+
+  public clearCanvas() {
+    this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+  }
+
+  public renderBodies() {
+    for (const [id, body] of Object.entries(this._bodies)) {
+      body.render(this._ctx);
+    }
+  }
+
+  public applyOnBodies(callback: (body: Body) => void) {
+    for (const [id, body] of Object.entries(this._bodies)) {
+      callback(body);
+    }
   }
 
   public add(body: Body) {
-    const position = this._bodies.length;
+    const id = uuidv4();
 
-    this._bodies.push(body);
-    body.add(this._ctx);
+    this._bodies[id] = body;
+    body.add(this._ctx, id);
 
-    return position;
+    return id;
   }
 
-  public remove(pos: number) {
-    const body = this._bodies[pos];
+  public remove(id: string) {
+    const body = this._bodies[id];
+    if (!body) return;
+
     body.remove(this._ctx);
-    this._bodies.splice(pos, 1);
+    delete this._bodies[id];
   }
 }
 

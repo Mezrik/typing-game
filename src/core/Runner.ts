@@ -1,9 +1,11 @@
 import { EngineInterface } from "./Engine";
-import Letter from "../objects/Letter";
 
 type RequestAnimationFrame = (callback: FrameRequestCallback) => number;
 type CancelAnimationFrame = (RequestID: number) => void;
-type TickCallback = () => void;
+type TickCallback = (
+  time: DOMHighResTimeStamp,
+  engine: EngineInterface
+) => void;
 
 class Runner {
   private _requestAnimationFrame: RequestAnimationFrame;
@@ -54,8 +56,7 @@ class Runner {
   }
 
   public tick(time: DOMHighResTimeStamp, engine: EngineInterface) {
-    const newLetter = new Letter("P", 16);
-    engine.add(newLetter);
+    this._callbacks.forEach((callback) => callback(time, engine));
   }
 
   public onTick(callback: TickCallback) {
