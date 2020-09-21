@@ -188,7 +188,7 @@ class Game {
     score.innerHTML = `Score: ${this.score}`;
 
     const restartBtn = document.createElement("a");
-    restartBtn.classList.add("restart-button");
+    restartBtn.classList.add("button");
     restartBtn.innerHTML = "Restart";
 
     const resetHandler = () => {
