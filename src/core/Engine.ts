@@ -1,9 +1,11 @@
 import Body from "./Body";
+// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 
 export interface EngineInterface {
-  add: (body: Body) => number;
+  add: (body: Body) => string;
   remove: (id: string) => void;
+  addToScene: (body: Body) => string;
 }
 
 export type Coords = {
@@ -24,6 +26,7 @@ class Engine implements EngineInterface {
   private _ctx: CanvasRenderingContext2D;
   private _canvas: HTMLCanvasElement;
   private _bodies: { [key: string]: Body } = {};
+  private _scene: { [key: string]: Body } = {};
 
   constructor(opts: EngineOptions) {
     const { options = {}, element } = opts;
@@ -75,6 +78,12 @@ class Engine implements EngineInterface {
     }
   }
 
+  public renderScene() {
+    for (const [id, body] of Object.entries(this._scene)) {
+      body.render(this._ctx);
+    }
+  }
+
   public applyOnBodies(callback: (body: Body) => void) {
     for (const [id, body] of Object.entries(this._bodies)) {
       callback(body);
@@ -96,6 +105,15 @@ class Engine implements EngineInterface {
 
     body.remove(this._ctx);
     delete this._bodies[id];
+  }
+
+  public addToScene(body: Body) {
+    const id = uuidv4();
+
+    this._scene[id] = body;
+    body.add(this._ctx, id);
+
+    return id;
   }
 }
 

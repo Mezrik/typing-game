@@ -23,7 +23,7 @@ class Letter extends Body {
   }
 
   public remove(ctx: CanvasRenderingContext2D) {
-    this._onRemoveCallback();
+    if (this._onRemoveCallback) this._onRemoveCallback();
   }
 
   public render(ctx: CanvasRenderingContext2D) {
