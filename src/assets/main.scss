@@ -12,8 +12,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: row-reverse;
 }
 
 .game-canvas {
   border: 1px solid #000;
+}
+
+.score-panel {
+  width: 150px;
+  border: 1px solid #000;
+  border-right: none;
 }
