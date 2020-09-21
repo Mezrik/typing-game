@@ -1,6 +1,8 @@
 const path = require("path");
 const webpack = require("webpack");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 const { merge } = require("webpack-merge");
 
 const dev = process.env.NODE_ENV !== "production";
@@ -73,7 +75,11 @@ const developmentConfig = {
 };
 
 module.exports = (env) => {
-  switch (env) {
+  if (env.analyze) {
+    commonConfig.plugins.push(new BundleAnalyzerPlugin());
+  }
+
+  switch (env.mode) {
     case "development":
       return merge(commonConfig, developmentConfig);
     case "production":
