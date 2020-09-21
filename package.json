@@ -31,7 +31,9 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
+    "@types/socket.io-client": "^1.4.33",
     "sass": "^1.26.11",
+    "socket.io-client": "^2.3.0",
     "uuid": "^8.3.0"
   }
 }
