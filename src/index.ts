@@ -3,6 +3,7 @@ import Game from "./Game";
 
 import * as io from "socket.io-client";
 import constants from "./config/constants";
+import environment from "./config/environment";
 
 const root = document.getElementById(constants.APP_ROOT_ELEMENT_ID);
 
@@ -11,9 +12,38 @@ const startOnePlayer = () => {
   game.main();
 };
 
-const startTwoPlayers = () => {};
+const startTwoPlayers = (roomID?: string) => {
+  let socket: SocketIOClient.Socket;
+
+  if (roomID) {
+    socket = io(environment.SOCKET_SERVER, {
+      query: {
+        roomID,
+      },
+    });
+  } else {
+    socket = io(environment.SOCKET_SERVER);
+  }
+
+  socket.on("connect", () => {});
+
+  socket.on("initial", (config: any) => {
+    console.log(config);
+  });
+  socket.on("test", (test: any) => {
+    console.log(test);
+  });
+};
 
 const gameSelect = () => {
+  if (location.search) {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.has("roomID")) {
+      startTwoPlayers(searchParams.get("roomID"));
+      return;
+    }
+  }
+
   const onePlayerBtn = document.createElement("a");
   onePlayerBtn.classList.add("button");
   onePlayerBtn.innerHTML = "One player";
@@ -49,13 +79,3 @@ const gameSelect = () => {
 };
 
 gameSelect();
-
-const socket = io("http://localhost:8080/");
-
-socket.on("connect", () => {
-  console.log("connected");
-});
-
-socket.on("initial", (config: any) => {
-  console.log(config);
-});
