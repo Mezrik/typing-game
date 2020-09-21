@@ -61,9 +61,9 @@ class Game {
       instance.onRemove(this.keepLettersComming);
       const id = this._engine.add(instance);
 
-      this._lettersMap[letter]
-        ? this._lettersMap[letter].push(id)
-        : (this._lettersMap[letter] = [id]);
+      this._lettersMap[letter.toLocaleLowerCase()]
+        ? this._lettersMap[letter.toLocaleLowerCase()].push(id)
+        : (this._lettersMap[letter.toLocaleLowerCase()] = [id]);
 
       return true;
     }
@@ -81,7 +81,7 @@ class Game {
   }
 
   public keyPressHandler(key: string) {
-    const instances = this._lettersMap[key];
+    const instances = this._lettersMap[key.toLocaleLowerCase()];
 
     if (!instances) return false;
 
@@ -89,7 +89,7 @@ class Game {
     this._engine.remove(id);
     this.score += 1;
 
-    if (instances.length <= 0) delete this._lettersMap[key];
+    if (instances.length <= 0) delete this._lettersMap[key.toLocaleLowerCase()];
 
     return true;
   }
@@ -110,7 +110,8 @@ class Game {
 
   public tickHandler(time: DOMHighResTimeStamp, e: Engine) {
     if (time - this._lastSpeedUp > constants.SPEED_UP_AFTER) {
-      this._fallingSpeed *= 1.05;
+      this._fallingSpeed =
+        Math.round(this._fallingSpeed * 1.005 * 10000) / 10000;
       this._lastSpeedUp = time;
     }
 
