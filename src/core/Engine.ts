@@ -6,6 +6,7 @@ export interface EngineInterface {
   add: (body: Body) => string;
   remove: (id: string) => void;
   addToScene: (body: Body) => string;
+  reset: () => void;
 }
 
 export type Coords = {
@@ -66,6 +67,11 @@ class Engine implements EngineInterface {
 
   get bodiesCount() {
     return Object.keys(this._bodies).length;
+  }
+
+  public reset() {
+    this._bodies = {};
+    this.clearCanvas();
   }
 
   public clearCanvas() {

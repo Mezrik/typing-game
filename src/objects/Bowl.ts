@@ -16,6 +16,10 @@ class Bowl extends Body {
     return (this.height / this._maxStrikes) * this._waterHeight;
   }
 
+  public reset() {
+    this._waterHeight = 0;
+  }
+
   public add(ctx: CanvasRenderingContext2D, engineID: string): void {
     this.render(ctx);
     this._engineID = engineID;

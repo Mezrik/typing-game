@@ -6,7 +6,7 @@ const Y_STARTING_POINT = 40;
 const MAX_STRIKES = 12;
 const BOWL_WIDTH = X_MAX + X_MIN;
 const BOWL_HEIGHT = 80;
-const SPEED_UP_AFTER = 5000;
+const SPEED_UP_AFTER = 50;
 const APP_ROOT_ELEMENT_ID = "game";
 
 export default {

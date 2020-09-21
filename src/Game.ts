@@ -6,6 +6,8 @@ import Bowl from "./objects/Bowl";
 
 import constants from "./config/constants";
 
+const root = document.getElementById(constants.APP_ROOT_ELEMENT_ID);
+
 class Game {
   private _lettersMap: { [letter: string]: string[] } = {};
   private _eventsQueue: KeyboardEvent[] = [];
@@ -20,8 +22,14 @@ class Game {
   private _scoreElement: HTMLElement;
 
   constructor() {
+    this.keyDownHandler = this.keyDownHandler.bind(this);
+    this.refreshLetterPosition = this.refreshLetterPosition.bind(this);
+    this.tickHandler = this.tickHandler.bind(this);
+    this.keepLettersComming = this.keepLettersComming.bind(this);
+    this.resetGame = this.resetGame.bind(this);
+
     this._engine = new Engine({
-      element: document.getElementById(constants.APP_ROOT_ELEMENT_ID),
+      element: root,
       options: {
         width: constants.X_MIN + constants.X_MAX,
         height: constants.Y_HEIGHT,
@@ -35,13 +43,11 @@ class Game {
       constants.MAX_STRIKES
     );
 
+    this._engine.addToScene(this._bowl);
     this._runnerInstance = new Runner();
     this.initScorePanel();
-
-    this.keyDownHandler = this.keyDownHandler.bind(this);
-    this.refreshLetterPosition = this.refreshLetterPosition.bind(this);
-    this.tickHandler = this.tickHandler.bind(this);
-    this.keepLettersComming = this.keepLettersComming.bind(this);
+    document.addEventListener("keydown", this.keyDownHandler);
+    this._runnerInstance.onTick(this.tickHandler);
   }
 
   public keepLettersComming() {
@@ -137,13 +143,13 @@ class Game {
 
   public setGameOver() {
     this._runnerInstance.stop();
+    this.renderGameOverMessage();
   }
 
   public initScorePanel() {
     const panel = document.createElement("div");
     panel.classList.add("score-panel");
     panel.style.height = `${constants.Y_HEIGHT}px`;
-    const root = document.getElementById(constants.APP_ROOT_ELEMENT_ID);
     root.appendChild(panel);
 
     const score = document.createElement("div");
@@ -154,12 +160,50 @@ class Game {
     this._scoreElement = score;
   }
 
+  public resetGame() {
+    this._lettersMap = {};
+    this._eventsQueue = [];
+    this._engine.reset();
+    this._bowl.reset();
+    this._lastSpeedUp = 0;
+    this._fallingSpeed = 1;
+    this._strikes = 0;
+    this.score = 0;
+
+    this.main();
+  }
+
+  public renderGameOverMessage() {
+    const msg = document.createElement("div");
+    msg.classList.add("game-over-msg");
+    root.appendChild(msg);
+
+    const text = document.createElement("span");
+    text.classList.add("msg-text");
+    text.innerHTML = "Game over";
+
+    const score = document.createElement("span");
+    score.classList.add("msg-score");
+    score.innerHTML = `Score: ${this.score}`;
+
+    const restartBtn = document.createElement("a");
+    restartBtn.classList.add("restart-button");
+    restartBtn.innerHTML = "Restart";
+
+    const resetHandler = () => {
+      restartBtn.removeEventListener("click", resetHandler);
+      msg.remove();
+      this.resetGame();
+    };
+    restartBtn.addEventListener("click", resetHandler);
+
+    msg.appendChild(text);
+    msg.appendChild(score);
+    msg.appendChild(restartBtn);
+  }
+
   public main() {
     this._runnerInstance.run(this._engine);
-    this._engine.addToScene(this._bowl);
-
-    document.addEventListener("keydown", this.keyDownHandler);
-    this._runnerInstance.onTick(this.tickHandler);
 
     for (let i = 0; i < constants.LETTERS_ON_SCREEN; i++) {
       setTimeout(() => {
