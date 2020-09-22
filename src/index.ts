@@ -38,7 +38,8 @@ const startTwoPlayers = (roomID?: string) => {
   });
 
   socket.on("room-not-found", (id: string) => {
-    text.innerHTML = `Specified room with id ${roomID} was not found.`;
+    container.remove();
+    gameSelect(true);
   });
 
   socket.on("players-connected", (id: string) => {
@@ -48,8 +49,8 @@ const startTwoPlayers = (roomID?: string) => {
   });
 };
 
-const gameSelect = () => {
-  if (location.search) {
+const gameSelect = (ignoreQS?: boolean) => {
+  if (location.search && !ignoreQS) {
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.has("roomID")) {
       startTwoPlayers(searchParams.get("roomID"));
