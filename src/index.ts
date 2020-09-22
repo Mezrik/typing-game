@@ -15,6 +15,14 @@ const startOnePlayer = () => {
 const startTwoPlayers = (roomID?: string) => {
   let socket: SocketIOClient.Socket;
 
+  const container = document.createElement("div");
+  container.classList.add("modal");
+
+  const text = document.createElement("div");
+  container.appendChild(text);
+  root.appendChild(container);
+  text.innerHTML = `Connecting to the server...`;
+
   if (roomID) {
     socket = io(environment.SOCKET_SERVER, {
       query: {
@@ -25,15 +33,12 @@ const startTwoPlayers = (roomID?: string) => {
     socket = io(environment.SOCKET_SERVER);
   }
 
-  const container = document.createElement("div");
   socket.on("room-created", (id: string) => {
-    container.classList.add("modal");
-
-    const text = document.createElement("div");
     text.innerHTML = `Send link to friend: ${window.location.href}?roomID=${id}`;
+  });
 
-    container.appendChild(text);
-    root.appendChild(container);
+  socket.on("room-not-found", (id: string) => {
+    text.innerHTML = `Specified room with id ${roomID} was not found.`;
   });
 
   socket.on("players-connected", (id: string) => {
