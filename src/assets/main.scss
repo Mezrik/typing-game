@@ -28,6 +28,9 @@ body {
   border-right: none;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  text-align: center;
+
   .score {
     margin-top: 20px;
     font-size: 1.25em;

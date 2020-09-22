@@ -25,13 +25,21 @@ const startTwoPlayers = (roomID?: string) => {
     socket = io(environment.SOCKET_SERVER);
   }
 
-  socket.on("connect", () => {});
+  const container = document.createElement("div");
+  socket.on("room-created", (id: string) => {
+    container.classList.add("modal");
 
-  socket.on("initial", (config: any) => {
-    console.log(config);
+    const text = document.createElement("div");
+    text.innerHTML = `Send link to friend: ${window.location.href}?roomID=${id}`;
+
+    container.appendChild(text);
+    root.appendChild(container);
   });
-  socket.on("test", (test: any) => {
-    console.log(test);
+
+  socket.on("players-connected", (id: string) => {
+    container.remove();
+    const game = new Game(socket, id);
+    game.main();
   });
 };
 

@@ -21,12 +21,24 @@ class Game {
   private _score = 0;
   private _scoreElement: HTMLElement;
 
-  constructor() {
+  private _oponentScore = 0;
+  private _socket: SocketIOClient.Socket;
+
+  private _opponentsScoreElement: HTMLElement;
+  private _goOpponentScore: HTMLElement;
+
+  constructor(socket?: SocketIOClient.Socket, roomID?: string) {
     this.keyDownHandler = this.keyDownHandler.bind(this);
     this.refreshLetterPosition = this.refreshLetterPosition.bind(this);
     this.tickHandler = this.tickHandler.bind(this);
     this.keepLettersComming = this.keepLettersComming.bind(this);
     this.resetGame = this.resetGame.bind(this);
+    this.listenToSocket = this.listenToSocket.bind(this);
+
+    if (socket) {
+      this._socket = socket;
+      this.listenToSocket(socket);
+    }
 
     this._engine = new Engine({
       element: root,
@@ -45,9 +57,17 @@ class Game {
 
     this._engine.addToScene(this._bowl);
     this._runnerInstance = new Runner();
-    this.initScorePanel();
     document.addEventListener("keydown", this.keyDownHandler);
     this._runnerInstance.onTick(this.tickHandler);
+
+    this.initScorePanel();
+  }
+
+  public listenToSocket(socket: SocketIOClient.Socket) {
+    socket.on("score-change", (scores: { [id: string]: number }) => {
+      delete scores[socket.id];
+      this.opponentScore = scores[Object.keys(scores)[0]];
+    });
   }
 
   public keepLettersComming() {
@@ -61,9 +81,9 @@ class Game {
       instance.onRemove(this.keepLettersComming);
       const id = this._engine.add(instance);
 
-      this._lettersMap[letter.toLocaleLowerCase()]
-        ? this._lettersMap[letter.toLocaleLowerCase()].push(id)
-        : (this._lettersMap[letter.toLocaleLowerCase()] = [id]);
+      this._lettersMap[letter.toLowerCase()]
+        ? this._lettersMap[letter.toLowerCase()].push(id)
+        : (this._lettersMap[letter.toLowerCase()] = [id]);
 
       return true;
     }
@@ -78,10 +98,27 @@ class Game {
   set score(x: number) {
     this._score = x;
     this._scoreElement.innerHTML = `score: ${x}`;
+
+    if (this._socket) {
+      this._socket.emit("new-score", x);
+    }
+  }
+
+  get opponentScore() {
+    return this._oponentScore;
+  }
+
+  set opponentScore(x: number) {
+    this._oponentScore = x;
+    this._opponentsScoreElement.innerHTML = `opponent's score: ${x}`;
+
+    if (this._goOpponentScore) {
+      this._goOpponentScore.innerHTML = `Opponent's score: ${x}`;
+    }
   }
 
   public keyPressHandler(key: string) {
-    const instances = this._lettersMap[key.toLocaleLowerCase()];
+    const instances = this._lettersMap[key.toLowerCase()];
 
     if (!instances) return false;
 
@@ -89,7 +126,7 @@ class Game {
     this._engine.remove(id);
     this.score += 1;
 
-    if (instances.length <= 0) delete this._lettersMap[key.toLocaleLowerCase()];
+    if (instances.length <= 0) delete this._lettersMap[key.toLowerCase()];
 
     return true;
   }
@@ -157,6 +194,14 @@ class Game {
     score.classList.add("score");
     panel.appendChild(score);
 
+    if (this._socket) {
+      const opponentScore = document.createElement("div");
+      opponentScore.classList.add("score");
+      opponentScore.innerHTML = `opponent's score: 0`;
+      panel.appendChild(opponentScore);
+      this._opponentsScoreElement = opponentScore;
+    }
+
     score.innerHTML = `score: 0`;
     this._scoreElement = score;
   }
@@ -187,6 +232,11 @@ class Game {
     score.classList.add("msg-score");
     score.innerHTML = `Score: ${this.score}`;
 
+    const opponentScore = document.createElement("span");
+    opponentScore.classList.add("msg-score");
+    opponentScore.innerHTML = `Opponent's score: ${this.opponentScore}`;
+    this._goOpponentScore = opponentScore;
+
     const restartBtn = document.createElement("a");
     restartBtn.classList.add("button");
     restartBtn.innerHTML = "Restart";
@@ -200,6 +250,7 @@ class Game {
 
     msg.appendChild(text);
     msg.appendChild(score);
+    msg.appendChild(opponentScore);
     msg.appendChild(restartBtn);
   }
 
