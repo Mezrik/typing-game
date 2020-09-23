@@ -1,3 +1,4 @@
+import constants from "../config/constants";
 import Body from "../core/Body";
 import { Coords } from "../core/Engine";
 
@@ -38,7 +39,7 @@ class Bowl extends Body {
 
     ctx.strokeRect(x, y, this.width, this.height);
 
-    ctx.fillStyle = "#1CA3EC";
+    ctx.fillStyle = constants.BOWL_COLOR;
 
     ctx.fillRect(
       x,

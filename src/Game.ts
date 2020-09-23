@@ -148,7 +148,11 @@ class Game {
   public tickHandler(time: DOMHighResTimeStamp, e: Engine) {
     if (time - this._lastSpeedUp > constants.SPEED_UP_AFTER) {
       this._fallingSpeed =
-        Math.round(this._fallingSpeed * 1.005 * 10000) / 10000;
+        Math.round(
+          this._fallingSpeed *
+            constants.GAME_SPEED *
+            constants.GAME_SPEED_SMOOTHING
+        ) / constants.GAME_SPEED_SMOOTHING;
       this._lastSpeedUp = time;
     }
 
@@ -260,7 +264,7 @@ class Game {
     for (let i = 0; i < constants.LETTERS_ON_SCREEN; i++) {
       setTimeout(() => {
         this.keepLettersComming();
-      }, 2000 * i);
+      }, constants.INITIAL_LETTERS_TIMEOUT * i);
     }
   }
 }

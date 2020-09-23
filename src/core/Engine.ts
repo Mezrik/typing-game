@@ -1,6 +1,7 @@
 import Body from "./Body";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+import constants from "../config/constants";
 
 export interface EngineInterface {
   add: (body: Body) => string;
@@ -39,8 +40,8 @@ class Engine implements EngineInterface {
 
     const canvas = document.createElement("canvas");
     canvas.classList.add("game-canvas");
-    canvas.width = options.width || 400;
-    canvas.height = options.height || 300;
+    canvas.width = options.width || constants.DEFAULT_CANVAS_WIDTH;
+    canvas.height = options.height || constants.DEFAULT_CANVAS_HEIGHT;
 
     element.appendChild(canvas);
 

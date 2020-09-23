@@ -1,3 +1,4 @@
+import constants from "../config/constants";
 import Body from "../core/Body";
 import { Coords } from "../core/Engine";
 
@@ -29,8 +30,8 @@ class Letter extends Body {
   public render(ctx: CanvasRenderingContext2D) {
     const { x, y } = this.coords;
 
-    ctx.fillStyle = "#000000";
-    ctx.font = `${this._size}px Arial`;
+    ctx.fillStyle = constants.LETTERS_COLOR;
+    ctx.font = `${this._size}px ${constants.LETTERS_FONT}`;
     ctx.fillText(this._char, x, y);
   }
 }
