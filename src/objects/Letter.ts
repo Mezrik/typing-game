@@ -2,6 +2,9 @@ import constants from "../config/constants";
 import Body from "../core/Body";
 import { Coords } from "../core/Engine";
 
+/**
+ * Represents falling letters.
+ */
 class Letter extends Body {
   private _char: string;
   private _size: number;

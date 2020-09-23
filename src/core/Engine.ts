@@ -23,6 +23,9 @@ export interface EngineOptions {
   };
 }
 
+/**
+ * Engine class which represents game canvas.
+ */
 class Engine implements EngineInterface {
   private _rootEl: HTMLElement;
   private _ctx: CanvasRenderingContext2D;
@@ -30,6 +33,10 @@ class Engine implements EngineInterface {
   private _bodies: { [key: string]: Body } = {};
   private _scene: { [key: string]: Body } = {};
 
+  /**
+   * Attaches canvas element to provided element.
+   * @param  {EngineOptions} opts
+   */
   constructor(opts: EngineOptions) {
     const { options = {}, element } = opts;
     this._rootEl = element;
@@ -70,33 +77,50 @@ class Engine implements EngineInterface {
     return Object.keys(this._bodies).length;
   }
 
+  /**
+   * Resets the engine (not scene)
+   */
   public reset() {
     this._bodies = {};
     this.clearCanvas();
   }
-
+  /**
+   * Simply clears the canvas
+   */
   public clearCanvas() {
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
   }
 
+  /**
+   * Renders moving bodies on canvas
+   */
   public renderBodies() {
     for (const [id, body] of Object.entries(this._bodies)) {
       body.render(this._ctx);
     }
   }
 
+  /**
+   * Renders static scene on canvas
+   */
   public renderScene() {
     for (const [id, body] of Object.entries(this._scene)) {
       body.render(this._ctx);
     }
   }
 
+  /**
+   * Runs callback with all bodies
+   */
   public applyOnBodies(callback: (body: Body) => void) {
     for (const [id, body] of Object.entries(this._bodies)) {
       callback(body);
     }
   }
 
+  /**
+   * Add body to the canvas
+   */
   public add(body: Body) {
     const id = uuidv4();
 
@@ -106,6 +130,9 @@ class Engine implements EngineInterface {
     return id;
   }
 
+  /**
+   * Remove body from the canvas
+   */
   public remove(id: string) {
     const body = this._bodies[id];
     if (!body) return;
@@ -114,6 +141,9 @@ class Engine implements EngineInterface {
     delete this._bodies[id];
   }
 
+  /**
+   * Add body to the static scene
+   */
   public addToScene(body: Body) {
     const id = uuidv4();
 

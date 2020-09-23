@@ -8,6 +8,9 @@ import constants from "./config/constants";
 
 const root = document.getElementById(constants.APP_ROOT_ELEMENT_ID);
 
+/**
+ * Main game class, contains the main game logic.
+ */
 class Game {
   private _lettersMap: { [letter: string]: string[] } = {};
   private _eventsQueue: KeyboardEvent[] = [];
@@ -62,14 +65,20 @@ class Game {
 
     this.initScorePanel();
   }
-
+  /**
+   * Serves for initializing multiplayer session
+   * @param  {SocketIOClient.Socket} socket
+   */
   public listenToSocket(socket: SocketIOClient.Socket) {
     socket.on("score-change", (scores: { [id: string]: number }) => {
       delete scores[socket.id];
       this.opponentScore = scores[Object.keys(scores)[0]];
     });
   }
-
+  /**
+   * Constructs the random letter and adds it to the engine.
+   * Also it attaches itself to letter remove event.
+   */
   public keepLettersComming() {
     if (this._engine.bodiesCount < constants.LETTERS_ON_SCREEN) {
       const letter = getRandomCapitalLetter();
@@ -116,7 +125,12 @@ class Game {
       this._goOpponentScore.innerHTML = `Opponent's score: ${x}`;
     }
   }
-
+  /**
+   * Handles the pressed key and removes according
+   * letter from the game (if there is more letters corresponding
+   * to the key, it removes the first one added to the engine)
+   * @param  {string} key
+   */
   public keyPressHandler(key: string) {
     const instances = this._lettersMap[key.toLowerCase()];
 
@@ -130,12 +144,20 @@ class Game {
 
     return true;
   }
-
+  /**
+   * Handles the keydown browser event - it adds it to the queue
+   * and it is processed on the next tick. Blocks composing events.
+   * @param  {KeyboardEvent} event
+   */
   public keyDownHandler(event: KeyboardEvent) {
     if (event.isComposing) return;
     this._eventsQueue.push(event);
   }
 
+  /**
+   * Moves the letter and calls the check if the letter is still in boundaries
+   * @param  {Letter} letter
+   */
   public refreshLetterPosition(letter: Letter) {
     letter.coords = {
       x: letter.coords.x,
@@ -144,7 +166,11 @@ class Game {
 
     this.checkIfFailed(letter);
   }
-
+  /**
+   * Keeps the game running. Contains falling speed logic.
+   * @param  {DOMHighResTimeStamp} time
+   * @param  {Engine} e
+   */
   public tickHandler(time: DOMHighResTimeStamp, e: Engine) {
     if (time - this._lastSpeedUp > constants.SPEED_UP_AFTER) {
       this._fallingSpeed =
@@ -166,6 +192,10 @@ class Game {
     e.renderScene();
   }
 
+  /**
+   * Checkes if letter is in canvas boundaries.
+   * @param  {Letter} letter
+   */
   public checkIfFailed(letter: Letter) {
     if (
       letter.coords.y + this._bowl.waterLevel <
@@ -183,11 +213,16 @@ class Game {
     return true;
   }
 
+  /**
+   * Sets the game over and renders game over message.
+   */
   public setGameOver() {
     this._runnerInstance.stop();
     this.renderGameOverMessage();
   }
-
+  /**
+   * Initializes the score elements.
+   */
   public initScorePanel() {
     const panel = document.createElement("div");
     panel.classList.add("score-panel");
@@ -209,7 +244,10 @@ class Game {
     score.innerHTML = `score: 0`;
     this._scoreElement = score;
   }
-
+  /**
+   * Resets the current client instance (in case of multiplayer resets only
+   * current instance).
+   */
   public resetGame() {
     this._lettersMap = {};
     this._eventsQueue = [];
@@ -223,6 +261,9 @@ class Game {
     this.main();
   }
 
+  /**
+   * Renders game over message
+   */
   public renderGameOverMessage() {
     const msg = document.createElement("div");
     msg.classList.add("game-over-msg");
@@ -258,6 +299,9 @@ class Game {
     msg.appendChild(restartBtn);
   }
 
+  /**
+   * Starts the game (starts the runner and adds the initial letters)
+   */
   public main() {
     this._runnerInstance.run(this._engine);
 

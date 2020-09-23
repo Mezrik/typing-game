@@ -1,5 +1,8 @@
 import { Coords } from "./Engine";
 
+/**
+ * Abstract body class, serves as a base for objects
+ */
 abstract class Body {
   private _width: number;
   private _height: number;
